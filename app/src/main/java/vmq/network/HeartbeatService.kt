@@ -1,0 +1,28 @@
+package vmq.network
+
+import vmq.data.AppConfig
+import vmq.util.HashUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+class HeartbeatService(
+    private val okHttpClient: OkHttpClient = OkHttpClient(),
+    private val currentTimeMillis: () -> Long = System::currentTimeMillis,
+) {
+    suspend fun sendHeartbeat(config: AppConfig): Result<String> = withContext(Dispatchers.IO) {
+        runCatching {
+            val timestamp = currentTimeMillis().toString()
+            val sign = HashUtils.md5(timestamp + config.key)
+            val request = Request.Builder()
+                .url(ApiUrlBuilder.buildHeartBeatUrl(config.host, timestamp, sign))
+                .get()
+                .build()
+
+            okHttpClient.newCall(request).execute().use { response ->
+                check(response.isSuccessful) { "Unexpected HTTP ${response.code}" }
+                response.body?.string().orEmpty()
+            }
+        }
+    }
+}

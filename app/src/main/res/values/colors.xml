@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2E5BFF</color>
+    <color name="colorPrimaryDark">#1E3DB8</color>
+    <color name="colorAccent">#12B886</color>
+
+    <color name="screenBackground">#F4F7FC</color>
+    <color name="surface">#FFFFFFFF</color>
+    <color name="surfaceBorder">#DCE6F5</color>
+    <color name="divider">#E8EEF8</color>
+    <color name="textPrimary">#162033</color>
+    <color name="textSecondary">#5E6B85</color>
+    <color name="textMuted">#7F8BA3</color>
+    <color name="buttonPrimaryText">#FFFFFFFF</color>
+    <color name="buttonSecondaryText">#2747B8</color>
+    <color name="buttonSecondaryBackground">#EEF3FF</color>
+    <color name="statusPillBackground">#E8EEFF</color>
+
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="result_view">#B0000000</color>
+    <color name="viewfinder_frame">#90FFFFFF</color>
+    <color name="result_point_color">#C0FFFF00</color>
+    <color name="laser_color">#0F0</color>
+    <color name="corner_color">#00FF00</color>
+</resources>
