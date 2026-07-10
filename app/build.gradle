@@ -19,8 +19,8 @@ android {
         applicationId "com.vone.qrcode"
         minSdk 21
         targetSdk 34
-        versionCode 1000000
-        versionName "2.1.0"
+        versionCode 99000000
+        versionName "99.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
