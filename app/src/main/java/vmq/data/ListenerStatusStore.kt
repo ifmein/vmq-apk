@@ -46,6 +46,7 @@ class ListenerStatusStore(context: Context) {
     }
 
     fun recordHeartbeatFailure(message: String) {
+        lastHeartbeatSuccessAt = null
         lastHeartbeatErrorMessage = message
     }
 

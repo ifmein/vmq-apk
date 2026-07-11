@@ -43,18 +43,24 @@ class PersistentForegroundService : Service() {
             context = this,
             notificationManager = notificationManager,
             statusStore = statusStore,
+            configStore = configStore,
         )
         notificationFactory.createOrUpdateChannel()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(TAG, "PersistentForegroundService started")
+        val action = intent?.action ?: ACTION_START
+        Log.d(TAG, "PersistentForegroundService started with action=$action")
 
         acquireWakeLock()
         startForegroundWithNotification()
 
         if (heartbeatJob?.isActive != true) {
             startHeartbeatLoop()
+        }
+
+        if (action == ACTION_REFRESH) {
+            refreshNotification()
         }
 
         return START_STICKY
@@ -146,6 +152,9 @@ class PersistentForegroundService : Service() {
     }
 
     companion object {
+        const val ACTION_START = "vmq.action.START_FOREGROUND_SERVICE"
+        const val ACTION_REFRESH = "vmq.action.REFRESH_FOREGROUND_NOTIFICATION"
+
         private const val TAG = "PersistentForegroundService"
         private const val HEARTBEAT_INTERVAL_MS = 30_000L
         private const val HEARTBEAT_LOOP_COUNT = 2

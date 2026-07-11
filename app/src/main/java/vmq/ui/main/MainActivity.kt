@@ -35,6 +35,7 @@ import vmq.di.AppContainer
 import vmq.ui.common.UiText
 import vmq.ui.scan.CaptureActivity
 import vmq.parser.PaymentNotificationParser
+import vmq.ui.foreground.ForegroundServiceController
 import vmq.ui.notification.NeNotificationService
 import vmq.ui.theme.VmqTheme
 import kotlinx.coroutines.launch
@@ -68,6 +69,7 @@ class MainActivity : ComponentActivity() {
 
         setupViewModel()
 
+        ForegroundServiceController.start(this)
         toggleNotificationListenerService(this)
         viewModel.loadSavedConfiguration()
 

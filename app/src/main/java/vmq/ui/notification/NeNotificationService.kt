@@ -62,13 +62,14 @@ class NeNotificationService : NotificationListenerService() {
     override fun onListenerConnected() {
         Log.d(TAG, "Listener connected")
         listenerStatusStore.recordListenerConnected()
-        ForegroundServiceController.start(this)
+        ForegroundServiceController.refresh(this)
         showToast(NotificationMessageFactory.listenerStarted())
     }
 
     override fun onListenerDisconnected() {
         Log.d(TAG, "Listener disconnected")
         listenerStatusStore.recordListenerDisconnected()
+        ForegroundServiceController.refresh(this)
         super.onListenerDisconnected()
     }
 

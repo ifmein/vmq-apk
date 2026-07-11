@@ -1,6 +1,6 @@
 package vmq.data
 
-import android.content.SharedPreferences
+import android.content.Context
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -19,6 +19,7 @@ class ListenerStatusStoreTest {
     @Before
     fun setup() {
         val context = RuntimeEnvironment.application.applicationContext
+        context.getSharedPreferences("listener_status", Context.MODE_PRIVATE).edit().clear().commit()
         store = ListenerStatusStore(context)
     }
 
@@ -64,6 +65,16 @@ class ListenerStatusStoreTest {
 
     @Test
     fun `recordHeartbeatFailure updates error message`() {
+        store.recordHeartbeatFailure("Connection timeout")
+
+        assertNull(store.lastHeartbeatSuccessAt)
+        assertEquals("Connection timeout", store.lastHeartbeatErrorMessage)
+    }
+
+    @Test
+    fun `recordHeartbeatFailure clears previous success`() {
+        store.recordHeartbeatSuccess()
+
         store.recordHeartbeatFailure("Connection timeout")
 
         assertNull(store.lastHeartbeatSuccessAt)
