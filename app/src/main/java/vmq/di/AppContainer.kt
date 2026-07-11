@@ -4,6 +4,7 @@ import android.content.Context
 import vmq.data.ConfigRepository
 import vmq.data.ConfigStore
 import vmq.data.DefaultConfigRepository
+import vmq.data.ListenerStatusStore
 import vmq.network.HeartbeatService
 import vmq.network.PaymentPushService
 import vmq.notification.NotificationEventHandler
@@ -31,4 +32,8 @@ object AppContainer {
     fun paymentPushService(): PaymentPushService = paymentPushService
 
     fun notificationEventHandler(): NotificationEventHandler = notificationEventHandler
+
+    fun listenerStatusStore(context: Context): ListenerStatusStore {
+        return ListenerStatusStore(context.applicationContext)
+    }
 }

@@ -46,4 +46,21 @@
     <string name="main_action_push_title">检测监听</string>
     <string name="main_action_push_subtitle">发送测试通知</string>
     <string name="main_footer_hint">需要将应用加入后台保护和电池优化白名单</string>
+
+    <!-- Foreground Service -->
+    <string name="foreground_channel_name">运行状态</string>
+    <string name="foreground_channel_description">显示应用运行状态和心跳信息</string>
+    <string name="foreground_notification_title">V免签监控运行中</string>
+    <string name="foreground_status_connected">监听已连接</string>
+    <string name="foreground_status_disconnected">监听未连接</string>
+    <string name="foreground_status_configured">已配置</string>
+    <string name="foreground_status_unconfigured">未配置</string>
+    <string name="foreground_status_heartbeat_success">心跳 %1$s</string>
+    <string name="foreground_status_heartbeat_failed">心跳失败</string>
+    <string name="foreground_status_heartbeat_pending">等待首次心跳</string>
+    <string name="foreground_content_connected_configured">监听已连接 · 已配置 · 心跳 %1$s</string>
+    <string name="foreground_content_disconnected_configured">监听未连接 · 已配置 · 等待恢复</string>
+    <string name="foreground_content_connected_unconfigured">监听已连接 · 未配置 · 等待配置</string>
+    <string name="foreground_content_disconnected_unconfigured">监听未连接 · 未配置</string>
+    <string name="foreground_action_view">查看详情</string>
 </resources>
