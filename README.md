@@ -4,6 +4,11 @@
 
 它通过 `NotificationListenerService` 监听微信 / 支付宝收款通知，并将结果回调到你的自建服务端。
 
+当前网络回调默认请求以下服务端接口：
+
+- `POST /api/v1/system/heartbeat`
+- `POST /api/v1/payments/notify`
+
 ## 当前状态
 
 - 已迁移到 **AndroidX**
@@ -186,6 +191,12 @@ https://example.com/api/your-key
 - 最后一个 `/` 后面的内容会被当作通讯密钥
 - 如果地址不带 `http://` 或 `https://`，应用会默认补 `http://`
 - 纯 `https://example.com` 这类**不带 key 的地址**会被判定为非法配置
+- App 会把剩余主机部分作为服务端基础地址，并在其后拼接：
+  - `/api/v1/system/heartbeat`
+  - `/api/v1/payments/notify`
+- 如果你配置的是 `https://example.com/api/your-key`，最终请求会是：
+  - `https://example.com/api/api/v1/system/heartbeat?...`
+  - `https://example.com/api/api/v1/payments/notify?...`
 
 ## 核心限制
 
