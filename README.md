@@ -17,7 +17,9 @@
 - 主界面已整理为 **ViewModel + UseCase + Repository** 的轻量分层结构
 - 通知监听逻辑已拆分为 **Service + Handler + Network Service**
 - 已补充 JVM 单元测试与 Compose `androidTest` 基础设施
-- 源码主包已从 `com.vone.vmq` 压缩为 `vmq`
+- 运行时代码主要位于 `app/src/main/java/vmq/`
+- Android `namespace` / `applicationId` 当前保持为 `com.vone.qrcode`，以维持既有 App 身份与升级兼容性
+- Release 构建已启用代码压缩与资源裁剪
 - 已支持以下服务端地址格式：
   - `example.com:8080/key`
   - `http://example.com:8080/key`
@@ -128,6 +130,14 @@ make clean
 
 ```text
 app/src/main/java/vmq/
+```
+
+Android 包标识说明：
+
+```text
+namespace      = com.vone.qrcode
+applicationId  = com.vone.qrcode
+source package = vmq.*
 ```
 
 主要分组：

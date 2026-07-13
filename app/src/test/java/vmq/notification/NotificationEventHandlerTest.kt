@@ -1,5 +1,6 @@
 package vmq.notification
 
+import com.vone.qrcode.BuildConfig
 import vmq.model.PaymentEvent
 import vmq.model.PaymentType
 import vmq.parser.PaymentNotificationParser
@@ -12,7 +13,7 @@ class NotificationEventHandlerTest {
     @Test
     fun `handle returns self test action for internal test notification`() {
         val result = handler.handle(
-            packageName = "com.vone.qrcode",
+            packageName = BuildConfig.APPLICATION_ID,
             title = "V免签测试推送",
             content = PaymentNotificationParser.SELF_TEST_MESSAGE,
         )

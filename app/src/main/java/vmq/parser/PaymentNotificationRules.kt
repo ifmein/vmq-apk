@@ -1,9 +1,11 @@
 package vmq.parser
 
+import com.vone.qrcode.BuildConfig
+
 object PaymentNotificationRules {
     const val ALIPAY_PACKAGE = "com.eg.android.AlipayGphone"
     const val WECHAT_PACKAGE = "com.tencent.mm"
-    const val APP_PACKAGE = "com.vone.qrcode"
+    val APP_PACKAGE: String = BuildConfig.APPLICATION_ID
 
     const val ALIPAY_PLATFORM = "支付宝"
     const val WECHAT_PLATFORM = "微信"

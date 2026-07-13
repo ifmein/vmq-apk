@@ -1,5 +1,6 @@
 package vmq.parser
 
+import com.vone.qrcode.BuildConfig
 import vmq.model.PaymentEvent
 import vmq.model.PaymentType
 import org.junit.Assert.assertEquals
@@ -90,7 +91,7 @@ class PaymentNotificationParserTest {
     fun `isSelfTestNotification returns true only for app package and expected content`() {
         assertTrue(
             PaymentNotificationParser.isSelfTestNotification(
-                packageName = "com.vone.qrcode",
+                packageName = BuildConfig.APPLICATION_ID,
                 content = PaymentNotificationParser.SELF_TEST_MESSAGE,
             ),
         )
