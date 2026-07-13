@@ -4,10 +4,8 @@ import vmq.data.AppConfig
 import vmq.util.HashUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 
 class HeartbeatService(
     private val okHttpClient: OkHttpClient = OkHttpClient(),
@@ -17,8 +15,10 @@ class HeartbeatService(
         runCatching {
             val timestamp = currentTimeMillis().toString()
             val sign = HashUtils.signGen(timestamp, config.key)
-            val requestBody = "{\"t\":\"$timestamp\",\"sign\":\"$sign\"}"
-                .toRequestBody("application/json; charset=utf-8".toMediaType())
+            val requestBody = HeartbeatRequestBody(
+                t = timestamp,
+                sign = sign,
+            ).toJsonRequestBody()
             val request = Request.Builder()
                 .url(ApiUrlBuilder.buildHeartBeatUrl(config.host))
                 .post(requestBody)
