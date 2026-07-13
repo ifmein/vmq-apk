@@ -33,14 +33,17 @@ class PaymentPushServiceTest {
 
             val result = service.sendPayment(config, paymentEvent)
             val request = server.takeRequest()
-            val sign = HashUtils.md5("${paymentEvent.type.code}${paymentEvent.amount}${timestamp}secret")
+            val channel = paymentEvent.type.code
+            val sign = HashUtils.signGen("$channel${paymentEvent.amount}$timestamp", "secret")
 
             assertTrue(result.isSuccess)
             assertEquals("PUSH_OK", result.getOrNull())
+            assertEquals("/api/api/v1/payments/notify", request.path)
             assertEquals(
-                "/api/api/v1/payments/notify?t=$timestamp&type=${paymentEvent.type.code}&price=${paymentEvent.amount}&sign=$sign",
-                request.path,
+                "{\"channel\":$channel,\"price\":${paymentEvent.amount},\"t\":\"$timestamp\",\"sign\":\"$sign\"}",
+                request.body.readUtf8(),
             )
+            assertEquals("application/json; charset=utf-8", request.getHeader("Content-Type"))
             assertEquals("POST", request.method)
         } finally {
             server.shutdown()

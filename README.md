@@ -193,9 +193,10 @@ https://example.com/api/your-key
 - App 会把剩余主机部分作为服务端基础地址，并在其后拼接：
   - `/api/v1/system/heartbeat`
   - `/api/v1/payments/notify`
+- 这两个接口都会使用 `POST` + `application/json` 请求体。
 - 如果你配置的是 `https://example.com/api/your-key`，最终请求会是：
-  - `https://example.com/api/api/v1/system/heartbeat?...`
-  - `https://example.com/api/api/v1/payments/notify?...`
+  - `https://example.com/api/api/v1/system/heartbeat`
+  - `https://example.com/api/api/v1/payments/notify`
 
 ## 核心限制
 

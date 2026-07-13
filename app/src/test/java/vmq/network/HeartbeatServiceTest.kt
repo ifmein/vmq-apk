@@ -28,11 +28,16 @@ class HeartbeatServiceTest {
 
             val result = service.sendHeartbeat(config)
             val request = server.takeRequest()
-            val sign = HashUtils.md5("${timestamp}secret")
+            val sign = HashUtils.signGen(timestamp.toString(), "secret")
 
             assertTrue(result.isSuccess)
             assertEquals("OK", result.getOrNull())
-            assertEquals("/api/api/v1/system/heartbeat?t=$timestamp&sign=$sign", request.path)
+            assertEquals("/api/api/v1/system/heartbeat", request.path)
+            assertEquals(
+                "{\"t\":\"$timestamp\",\"sign\":\"$sign\"}",
+                request.body.readUtf8(),
+            )
+            assertEquals("application/json; charset=utf-8", request.getHeader("Content-Type"))
             assertEquals("POST", request.method)
         } finally {
             server.shutdown()

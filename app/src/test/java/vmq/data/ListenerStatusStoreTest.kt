@@ -1,6 +1,7 @@
 package vmq.data
 
 import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -9,7 +10,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import java.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
@@ -18,7 +18,7 @@ class ListenerStatusStoreTest {
 
     @Before
     fun setup() {
-        val context = RuntimeEnvironment.application.applicationContext
+        val context = ApplicationProvider.getApplicationContext<Context>()
         context.getSharedPreferences("listener_status", Context.MODE_PRIVATE).edit().clear().commit()
         store = ListenerStatusStore(context)
     }

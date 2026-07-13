@@ -5,8 +5,10 @@ import vmq.model.PaymentEvent
 import vmq.util.HashUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class PaymentPushService(
     private val okHttpClient: OkHttpClient = OkHttpClient(),
@@ -15,18 +17,13 @@ class PaymentPushService(
     suspend fun sendPayment(config: AppConfig, paymentEvent: PaymentEvent): Result<String> = withContext(Dispatchers.IO) {
         runCatching {
             val timestamp = currentTimeMillis().toString()
-            val sign = HashUtils.md5(paymentEvent.type.code.toString() + paymentEvent.amount + timestamp + config.key)
+            val channel = paymentEvent.type.code
+            val sign = HashUtils.signGen("$channel${paymentEvent.amount}$timestamp", config.key)
+            val requestBody = "{\"channel\":$channel,\"price\":${paymentEvent.amount},\"t\":\"$timestamp\",\"sign\":\"$sign\"}"
+                .toRequestBody("application/json; charset=utf-8".toMediaType())
             val request = Request.Builder()
-                .url(
-                    ApiUrlBuilder.buildAppPushUrl(
-                        hostValue = config.host,
-                        timestamp = timestamp,
-                        type = paymentEvent.type.code,
-                        price = paymentEvent.amount,
-                        sign = sign,
-                    ),
-                )
-                .post(okhttp3.FormBody.Builder().build())
+                .url(ApiUrlBuilder.buildAppPushUrl(config.host))
+                .post(requestBody)
                 .build()
 
             okHttpClient.newCall(request).execute().use { response ->

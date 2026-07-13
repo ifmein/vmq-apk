@@ -236,6 +236,6 @@ fun `example`() = runTest {
 1. 安装并启动 App
 2. 打开“通知访问权限”
 3. 通过**扫码配置**或**手动配置**填写服务端地址和密钥
-4. 点击“检测心跳”验证服务端连通性（请求 `POST /api/v1/system/heartbeat`）
+4. 点击“检测心跳”验证服务端连通性（请求 `POST /api/v1/system/heartbeat`，JSON body）
 5. 点击“检测监听”验证通知监听权限
-6. 用微信 / 支付宝做一笔小额收款测试（支付通知回调到 `POST /api/v1/payments/notify`）
+6. 用微信 / 支付宝做一笔小额收款测试（支付通知回调到 `POST /api/v1/payments/notify`，JSON body，字段使用 `channel`）

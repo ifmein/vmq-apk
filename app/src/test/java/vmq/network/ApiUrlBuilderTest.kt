@@ -26,17 +26,13 @@ class ApiUrlBuilderTest {
     }
 
     @Test
-    fun `build app push url keeps path and query`() {
+    fun `build app push url keeps path`() {
         val result = ApiUrlBuilder.buildAppPushUrl(
             hostValue = "https://example.com/api",
-            timestamp = "123",
-            type = 2,
-            price = 12.34,
-            sign = "xyz",
         )
 
         assertEquals(
-            "https://example.com/api/api/v1/payments/notify?t=123&type=2&price=12.34&sign=xyz",
+            "https://example.com/api/api/v1/payments/notify",
             result,
         )
     }
