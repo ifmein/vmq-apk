@@ -31,7 +31,6 @@
 - macOS / Linux
 - Java 17+
 - Android SDK
-- `adb`
 
 ## 构建
 
@@ -49,9 +48,22 @@ make build
 make build-release
 make version
 make bump VERSION=1.2.3
-make release VERSION=1.2.3
 make tag VERSION=1.2.3
+make release
+make release VERSION=1.2.3
 ```
+
+### 推荐发版
+
+```bash
+bash scripts/release.sh 1.2.3
+bash scripts/release.sh
+```
+
+说明：
+- `bash scripts/release.sh 1.2.3`：按指定版本发版
+- `bash scripts/release.sh`：自动递增版本号后发版（默认 patch）
+- `make release`：只是对 `bash scripts/release.sh` 的包装
 
 ## 测试
 
@@ -94,34 +106,11 @@ make tag VERSION=1.2.3
 .github/workflows/android.yml
 ```
 
-## 安装到设备
-
-### 默认设备
-
-```bash
-make install
-```
-
-### 指定设备
-
-```bash
-make install DEVICE=192.168.20.182:41555
-```
-
-### 构建 + 安装 + 启动
-
-```bash
-make run DEVICE=192.168.20.182:41555
-```
-
 ## 常用命令
 
 ```bash
-make devices
-make launch DEVICE=<adb-serial>
-make logs DEVICE=<adb-serial>
-make reinstall DEVICE=<adb-serial>
 make clean
+make apk-path
 ```
 
 ## 代码结构

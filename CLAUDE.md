@@ -15,8 +15,16 @@ make build
 make build-release
 make version
 make bump VERSION=1.2.3
-make release VERSION=1.2.3
 make tag VERSION=1.2.3
+make release
+make release VERSION=1.2.3
+```
+
+### 推荐发版命令
+
+```bash
+bash scripts/release.sh 1.2.3
+bash scripts/release.sh
 ```
 
 ### 发布新版本
@@ -27,34 +35,41 @@ make tag VERSION=1.2.3
 make bump VERSION=1.2.3
 ```
 
-更新版本号并执行单元测试与 Release 构建：
+按指定版本发版、提交、打标、推送并触发 workflow：
 
 ```bash
-make release VERSION=1.2.3
+bash scripts/release.sh 1.2.3
 ```
 
-仅预览动作，不修改文件：
+不传版本号时，默认自动递增版本号并发版（默认递增 patch，且会自动跳过已存在的 tag）：
 
 ```bash
-make release VERSION=1.2.3 DRY_RUN=1
+bash scripts/release.sh
+```
+
+仅预览完整发版动作：
+
+```bash
+bash scripts/release.sh --dry-run
 ```
 
 跳过单元测试：
 
 ```bash
-make release VERSION=1.2.3 SKIP_TESTS=1
+bash scripts/release.sh --skip-tests
 ```
 
-给当前提交打 Git 标记：
+仅打 Git 标记：
 
 ```bash
 make tag VERSION=1.2.3
 ```
 
-仅预览打标动作：
+`make release` 仍可使用，但只是 `bash scripts/release.sh` 的包装：
 
 ```bash
-make tag VERSION=1.2.3 DRY_RUN=1
+make release
+make release VERSION=1.2.3
 ```
 
 
@@ -195,7 +210,8 @@ fun `example`() = runTest {
 执行全部测试与构建时，可使用：
 
 ```bash
-make release VERSION=1.2.3
+./gradlew testDebugUnitTest
+./gradlew assembleRelease
 ```
 
 仅在需要 Android 设备能力时，才执行仪器测试。
@@ -214,20 +230,6 @@ make release VERSION=1.2.3
 - 测试中的注释如有需要，必须使用 **English only**。
 - 非必要不要测试 UI 框架实现细节，优先测试业务行为与状态。
 - 对外部依赖（网络、系统服务、通知、扫码结果等），必须通过抽象和替身隔离，不要在单元测试中访问真实环境。
-
-## 无线调试
-
-### 配对
-
-```bash
-make pair HOST=192.168.20.182 PAIR_PORT=44853 PAIR_CODE=347425
-```
-
-### 连接
-
-```bash
-make connect HOST=192.168.20.182 CONNECT_PORT=41555
-```
 
 ## App 使用流程
 
