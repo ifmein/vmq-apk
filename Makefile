@@ -12,7 +12,7 @@ DEBUG_APK := app/build/outputs/apk/debug/app-debug.apk
 RELEASE_APK := app/build/outputs/apk/release/app-release.apk
 RELEASE_ARGS := $(if $(filter 1,$(DRY_RUN)),--dry-run,) $(if $(filter 1,$(SKIP_TESTS)),--skip-tests,) $(if $(REMOTE),--remote $(REMOTE),) $(if $(BUMP),--bump $(BUMP),)
 
-.PHONY: help build build-debug build-release clean apk-path version bump release tag
+.PHONY: help build build-debug build-release clean apk-path version bump release tag adb-refresh
 
 REQUIRE_VERSION = @test -n "$(VERSION)" || (printf '%s\n' "VERSION is required, for example: make $@ VERSION=1.2.3" >&2; exit 1)
 
@@ -46,3 +46,8 @@ clean: ## Clean Gradle outputs
 
 apk-path: ## Print APK output paths
 	@printf '%s\n' $(DEBUG_APK) $(RELEASE_APK)
+
+adb-refresh: ## Reconnect ADB server (kill + restart)
+	adb kill-server
+	adb start-server
+	adb disconnect
