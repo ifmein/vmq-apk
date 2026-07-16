@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.SocketPolicy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -65,6 +66,32 @@ class PaymentPushServiceTest {
                 okHttpClient = OkHttpClient(),
                 dispatcher = StandardTestDispatcher(testScheduler),
                 currentTimeMillis = { 123456789L },
+            )
+
+            val result = service.sendPayment(
+                config = AppConfig(host = server.url("/").toString().removeSuffix("/"), key = "secret"),
+                paymentEvent = PaymentEvent(PaymentType.WECHAT, 8.88),
+            )
+
+            assertTrue(result.isSuccess)
+            assertEquals("PUSH_OK", result.getOrNull())
+            assertEquals(2, server.requestCount)
+        } finally {
+            server.shutdown()
+        }
+    }
+
+    @Test
+    fun `sendPayment retries on network error and succeeds on second attempt`() = runTest {
+        val server = MockWebServer()
+        server.enqueue(MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START))
+        server.enqueue(MockResponse().setBody("PUSH_OK"))
+        server.start()
+
+        try {
+            val service = PaymentPushService(
+                okHttpClient = OkHttpClient(),
+                dispatcher = StandardTestDispatcher(testScheduler),
             )
 
             val result = service.sendPayment(
