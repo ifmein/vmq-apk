@@ -14,7 +14,7 @@ class PaymentPushService(
 ) {
     suspend fun sendPayment(config: AppConfig, paymentEvent: PaymentEvent): Result<String> = withContext(Dispatchers.IO) {
         runCatching {
-            val timestamp = currentTimeMillis().toString()
+            val timestamp = (currentTimeMillis() / 1_000).toString()
             val channel = paymentEvent.type.code
             val sign = HashUtils.signGen("$channel${paymentEvent.amount}$timestamp", config.key)
             val requestBody = PaymentNotifyRequestBody(

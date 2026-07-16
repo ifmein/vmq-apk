@@ -13,7 +13,7 @@ class HeartbeatService(
 ) {
     suspend fun sendHeartbeat(config: AppConfig): Result<String> = withContext(Dispatchers.IO) {
         runCatching {
-            val timestamp = currentTimeMillis().toString()
+            val timestamp = (currentTimeMillis() / 1_000).toString()
             val sign = HashUtils.signGen(timestamp, config.key)
             val requestBody = HeartbeatRequestBody(
                 t = timestamp,
