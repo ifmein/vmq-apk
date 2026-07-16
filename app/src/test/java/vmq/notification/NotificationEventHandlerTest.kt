@@ -36,6 +36,20 @@ class NotificationEventHandlerTest {
     }
 
     @Test
+    fun `handle returns payment detected action for personal wechat collection code notification`() {
+        val result = handler.handle(
+            packageName = "com.tencent.mm",
+            title = "微信支付",
+            content = "个人收款码到账¥0.03",
+        )
+
+        assertEquals(
+            NotificationAction.PaymentDetected(PaymentEvent(PaymentType.WECHAT, 0.03)),
+            result,
+        )
+    }
+
+    @Test
     fun `handle returns amount parse failed for supported payment notification without amount`() {
         val result = handler.handle(
             packageName = "com.tencent.mm",
