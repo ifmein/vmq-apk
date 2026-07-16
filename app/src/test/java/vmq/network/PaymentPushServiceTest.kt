@@ -4,7 +4,7 @@ import vmq.data.AppConfig
 import vmq.model.PaymentEvent
 import vmq.model.PaymentType
 import vmq.util.HashUtils
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -30,7 +30,7 @@ class PaymentPushServiceTest {
             val paymentEvent = PaymentEvent(PaymentType.ALIPAY, 12.34)
             val service = PaymentPushService(
                 okHttpClient = OkHttpClient(),
-                dispatcher = Dispatchers.Unconfined,
+                dispatcher = StandardTestDispatcher(testScheduler),
                 currentTimeMillis = { timestampMillis },
             )
 
@@ -63,7 +63,7 @@ class PaymentPushServiceTest {
         try {
             val service = PaymentPushService(
                 okHttpClient = OkHttpClient(),
-                dispatcher = Dispatchers.Unconfined,
+                dispatcher = StandardTestDispatcher(testScheduler),
                 currentTimeMillis = { 123456789L },
             )
 
@@ -89,7 +89,7 @@ class PaymentPushServiceTest {
         try {
             val service = PaymentPushService(
                 okHttpClient = OkHttpClient(),
-                dispatcher = Dispatchers.Unconfined,
+                dispatcher = StandardTestDispatcher(testScheduler),
             )
 
             val result = service.sendPayment(
@@ -113,7 +113,7 @@ class PaymentPushServiceTest {
         try {
             val service = PaymentPushService(
                 okHttpClient = OkHttpClient(),
-                dispatcher = Dispatchers.Unconfined,
+                dispatcher = StandardTestDispatcher(testScheduler),
             )
 
             val result = service.sendPayment(
