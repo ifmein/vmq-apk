@@ -7,13 +7,9 @@ object PaymentNotificationParser {
     const val SELF_TEST_MESSAGE = "这是一条测试推送信息，如果程序正常，则会提示监听权限正常"
 
     fun parse(packageName: String, title: String?, content: String?): PaymentEvent? {
-        if (content.isNullOrEmpty()) {
-            return null
-        }
-
         return when (packageName) {
-            PaymentNotificationRules.ALIPAY_PACKAGE -> parseAlipay(content)
-            PaymentNotificationRules.WECHAT_PACKAGE -> parseWeChat(title, content)
+            PaymentNotificationRules.ALIPAY_PACKAGE -> parseAlipay(title, content)
+            PaymentNotificationRules.WECHAT_PACKAGE -> content?.let { parseWeChat(title, it) }
             else -> null
         }
     }
@@ -22,12 +18,15 @@ object PaymentNotificationParser {
         return packageName == PaymentNotificationRules.APP_PACKAGE && content == SELF_TEST_MESSAGE
     }
 
-    private fun parseAlipay(content: String): PaymentEvent? {
-        if (!PaymentNotificationRules.containsAlipayPaymentKeyword(content)) {
+    private fun parseAlipay(title: String?, content: String?): PaymentEvent? {
+        val notificationText = listOfNotNull(title, content)
+            .filter(String::isNotBlank)
+            .joinToString(" ")
+        if (!PaymentNotificationRules.containsAlipayPaymentKeyword(notificationText)) {
             return null
         }
 
-        val amount = extractAmount(content) ?: return null
+        val amount = extractAmount(notificationText) ?: return null
         return PaymentEvent(PaymentType.ALIPAY, amount)
     }
 
