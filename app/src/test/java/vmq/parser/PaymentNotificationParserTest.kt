@@ -22,6 +22,17 @@ class PaymentNotificationParserTest {
     }
 
     @Test
+    fun `parse returns alipay event when payment text is in title`() {
+        val result = PaymentNotificationParser.parse(
+            packageName = "com.eg.android.AlipayGphone",
+            title = "你已成功收款0.05元 XXXXX",
+            content = "",
+        )
+
+        assertEquals(PaymentEvent(PaymentType.ALIPAY, 0.05), result)
+    }
+
+    @Test
     fun `parse returns wechat event for supported title`() {
         val result = PaymentNotificationParser.parse(
             packageName = "com.tencent.mm",
