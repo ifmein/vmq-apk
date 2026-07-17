@@ -93,6 +93,16 @@ https://example.com/api/your-key
   - `/api/v1/payments/notify`
 - 请求方式：`POST` + `application/json`
 
+### 回调请求认证 v1
+
+两个回调接口均使用 HTTPS，并以请求头认证，而不是在 JSON body 中传递 `t`、`sign`：
+
+- `X-VMQ-Timestamp`：10 位 Unix 秒时间戳。
+- `X-VMQ-Nonce`：每次 HTTP 尝试新建的小写 UUID v4。
+- `X-VMQ-Signature`：`v1=` 加 HMAC-SHA256 小写十六进制摘要。
+
+签名覆盖以下六行 UTF-8 canonical request：协议版本 `VMQ-HMAC-SHA256-V1`、大写 HTTP 方法、URL path、timestamp、nonce，以及实际发送 JSON bytes 的 SHA-256 摘要。支付上报的每一次重试都会生成新的 timestamp、nonce 和签名。APK 与服务端必须配套升级到 v1。
+
 ## 核心限制
 
 这是**基于通知文案解析**的自用方案，不是官方支付接口，受限于：
