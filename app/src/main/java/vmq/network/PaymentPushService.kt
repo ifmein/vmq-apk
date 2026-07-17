@@ -2,11 +2,11 @@ package vmq.network
 
 import vmq.data.AppConfig
 import vmq.model.PaymentEvent
-import vmq.util.HashUtils
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
@@ -19,6 +19,7 @@ class PaymentPushService(
     okHttpClient: OkHttpClient = OkHttpClient(),
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val currentTimeMillis: () -> Long = System::currentTimeMillis,
+    private val nonceFactory: () -> String = RequestSignature::newNonce,
 ) {
     private val client = okHttpClient.newBuilder()
         .callTimeout(5, TimeUnit.SECONDS)
@@ -30,17 +31,24 @@ class PaymentPushService(
                 withTimeout(30_000L) {
                     retry(RetryConfig(maxAttempts = 4, initialDelayMs = 1_000L)) {
                         val timestamp = (currentTimeMillis() / 1_000).toString()
-                        val channel = paymentEvent.type.code
-                        val sign = HashUtils.signGen("$channel${paymentEvent.amount}$timestamp", config.key)
-                        val requestBody = PaymentNotifyRequestBody(
-                            channel = channel,
+                        val nonce = nonceFactory()
+                        val encodedBody = PaymentNotifyRequestBody(
+                            channel = paymentEvent.type.code,
                             price = paymentEvent.amount,
-                            t = timestamp,
-                            sign = sign,
-                        ).toJsonRequestBody()
+                        ).encodeJsonRequestBody()
+                        val url = ApiUrlBuilder.buildAppPushUrl(config.host)
+                        val headers = RequestSignature.buildHeaders(
+                            method = "POST",
+                            path = url.toHttpUrl().encodedPath,
+                            timestamp = timestamp,
+                            nonce = nonce,
+                            body = encodedBody.bytes,
+                            key = config.key,
+                        )
                         val request = Request.Builder()
-                            .url(ApiUrlBuilder.buildAppPushUrl(config.host))
-                            .post(requestBody)
+                            .url(url)
+                            .post(encodedBody.toRequestBody())
+                            .apply { headers.forEach { (name, value) -> header(name, value) } }
                             .build()
 
                         try {

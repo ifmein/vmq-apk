@@ -14,19 +14,21 @@ private val apiJson = Json {
 private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
 
 @Serializable
-data class HeartbeatRequestBody(
-    val t: String,
-    val sign: String,
-)
+data object HeartbeatRequestBody
 
 @Serializable
 data class PaymentNotifyRequestBody(
     val channel: Int,
     val price: Double,
-    val t: String,
-    val sign: String,
 )
 
-internal inline fun <reified T> T.toJsonRequestBody(): RequestBody {
-    return apiJson.encodeToString(this).toRequestBody(jsonMediaType)
+internal data class EncodedJsonRequestBody(val json: String) {
+    val bytes: ByteArray
+        get() = json.toByteArray(Charsets.UTF_8)
+
+    fun toRequestBody(): RequestBody = json.toRequestBody(jsonMediaType)
+}
+
+internal inline fun <reified T> T.encodeJsonRequestBody(): EncodedJsonRequestBody {
+    return EncodedJsonRequestBody(apiJson.encodeToString(this))
 }

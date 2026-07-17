@@ -1,7 +1,6 @@
 package vmq.network
 
 import vmq.data.AppConfig
-import vmq.util.HashUtils
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -25,18 +24,29 @@ class HeartbeatServiceTest {
             val service = HeartbeatService(
                 okHttpClient = OkHttpClient(),
                 currentTimeMillis = { timestampMillis },
+                nonceFactory = { "123e4567-e89b-42d3-a456-426614174000" },
             )
 
             val result = service.sendHeartbeat(config)
             val request = server.takeRequest()
-            val sign = HashUtils.signGen(timestamp.toString(), "secret")
+            val body = "{}"
 
             assertTrue(result.isSuccess)
             assertEquals("OK", result.getOrNull())
             assertEquals("/api/api/v1/system/heartbeat", request.path)
+            assertEquals(body, request.body.readUtf8())
+            assertEquals("$timestamp", request.getHeader(RequestSignature.TIMESTAMP_HEADER))
+            assertEquals("123e4567-e89b-42d3-a456-426614174000", request.getHeader(RequestSignature.NONCE_HEADER))
             assertEquals(
-                "{\"t\":\"$timestamp\",\"sign\":\"$sign\"}",
-                request.body.readUtf8(),
+                RequestSignature.sign(
+                    method = "POST",
+                    path = "/api/api/v1/system/heartbeat",
+                    timestamp = timestamp.toString(),
+                    nonce = "123e4567-e89b-42d3-a456-426614174000",
+                    body = body.toByteArray(Charsets.UTF_8),
+                    key = "secret",
+                ),
+                request.getHeader(RequestSignature.SIGNATURE_HEADER),
             )
             assertEquals("application/json; charset=utf-8", request.getHeader("Content-Type"))
             assertEquals("POST", request.method)
