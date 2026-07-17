@@ -55,6 +55,17 @@ class PaymentNotificationParserTest {
     }
 
     @Test
+    fun `parse uses the wechat collection amount instead of promotional amount in content`() {
+        val result = PaymentNotificationParser.parse(
+            packageName = "com.tencent.mm",
+            title = "微信支付",
+            content = "微信支付收款8.88元，免费提现额度1000元",
+        )
+
+        assertEquals(PaymentEvent(PaymentType.WECHAT, 8.88), result)
+    }
+
+    @Test
     fun `parse returns null for blank content`() {
         val result = PaymentNotificationParser.parse(
             packageName = "com.tencent.mm",
