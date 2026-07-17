@@ -33,6 +33,17 @@ class PaymentNotificationParserTest {
     }
 
     @Test
+    fun `parse uses the alipay collection amount instead of promotional amount in content`() {
+        val result = PaymentNotificationParser.parse(
+            packageName = "com.eg.android.AlipayGphone",
+            title = "你已成功收款0.02元",
+            content = "已转入余额 免费领600万元健康保障>>",
+        )
+
+        assertEquals(PaymentEvent(PaymentType.ALIPAY, 0.02), result)
+    }
+
+    @Test
     fun `parse returns wechat event for supported title`() {
         val result = PaymentNotificationParser.parse(
             packageName = "com.tencent.mm",
